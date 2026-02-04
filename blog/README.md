@@ -8,6 +8,7 @@ A collection of technical blog posts covering Azure, Python, and cloud developme
 
 | Date | Title | Topics |
 |------|-------|--------|
+| 2026-02-04 | [Stateful Workloads on AKS: A Comprehensive Guide](aks-stateful-workloads-guide.md) | AKS, Kubernetes, Stateful, Storage, PaaS, Databases |
 | 2026-02-04 | [Azure Red Hat OpenShift (ARO) Learning Plan](azure-red-hat-openshift-learning-plan.md) | Azure, ARO, OpenShift, Kubernetes, Learning Path |
 | 2026-02-04 | [Azure PostgreSQL Hosting Options: A Complete Comparison Guide](azure-postgresql-hosting-options.md) | Azure, PostgreSQL, Flexible Server, Elastic Clusters, AKS, IaaS |
 | 2026-02-02 | [Capability Hosts in Azure AI Foundry](azure-ai-foundry-capability-hosts.md) | Azure AI Foundry, Agents, BYOV, Capability Hosts |
@@ -18,6 +19,7 @@ A collection of technical blog posts covering Azure, Python, and cloud developme
 ## Categories
 
 ### Azure
+- [Stateful Workloads on AKS: A Comprehensive Guide](aks-stateful-workloads-guide.md)
 - [Azure Red Hat OpenShift (ARO) Learning Plan](azure-red-hat-openshift-learning-plan.md)
 - [Azure PostgreSQL Hosting Options](azure-postgresql-hosting-options.md)
 - [Capability Hosts in Azure AI Foundry](azure-ai-foundry-capability-hosts.md)
