@@ -11,6 +11,7 @@ Choosing the right PostgreSQL hosting option on Azure can be confusing. With mul
 | **Standard workloads** (web apps, APIs) | Azure Database for PostgreSQL - Flexible Server |
 | **Horizontal scale** (SaaS, multi-tenant) | Flexible Server with Elastic Clusters (Citus) |
 | **Full control** (custom extensions, OS access) | PostgreSQL on Azure VMs |
+| **Kubernetes-native, multi-cloud** | PostgreSQL on AKS (with operators) |
 | **Massive distributed scale** | Azure Cosmos DB for NoSQL (not PostgreSQL) |
 
 ---
@@ -129,7 +130,59 @@ For scenarios where you need complete control over the PostgreSQL engine, operat
 
 ---
 
-### 4. Azure Cosmos DB for PostgreSQL ❌ (Deprecated for New Projects)
+### 4. PostgreSQL on Azure Kubernetes Service (AKS) ⚠️ (Kubernetes-Native)
+
+**Self-managed PostgreSQL on Kubernetes using operators.**
+
+For teams already running workloads on AKS and wanting a unified Kubernetes-native approach, running PostgreSQL on AKS with a Kubernetes operator is a viable option. This is **not** an anti-pattern, but it comes with higher operational responsibility.
+
+**Popular Operators:**
+- **[CloudNativePG](https://cloudnative-pg.io/)** — CNCF project, excellent for production
+- **[Zalando Postgres Operator](https://github.com/zalando/postgres-operator)** — Battle-tested at Zalando
+- **[Crunchy PGO](https://github.com/CrunchyData/postgres-operator)** — Enterprise-grade with Crunchy Data support
+- **[Percona Operator](https://www.percona.com/software/percona-operators)** — Open-source, multi-database support
+
+**Key Features:**
+- **Kubernetes-Native:** Declarative CRDs, GitOps-friendly, Helm deployments
+- **Multi-Cloud Portability:** Same operator works on AKS, EKS, GKE, on-prem
+- **Operator-Managed HA:** Automatic failover, streaming replication
+- **Integrated Backups:** pgBackRest, Velero, S3-compatible storage
+- **Connection Pooling:** PgBouncer sidecars or built-in pooling
+
+**Trade-offs:**
+
+| Aspect | Flexible Server (PaaS) | PostgreSQL on AKS |
+|--------|------------------------|-------------------|
+| **Management** | Microsoft manages | You manage (with operators) |
+| **HA/Failover** | Built-in, zone-redundant | Operator-dependent, you configure |
+| **Backups** | Automated, geo-redundant | You configure (pgBackRest, Velero) |
+| **Scaling** | Vertical (change tier) | Horizontal read replicas (operator) |
+| **Portability** | Azure-only | Multi-cloud, on-prem |
+| **SLA** | Up to 99.99% | Your design determines this |
+| **Cost** | Predictable per-tier | Potentially cheaper with spot/bin-packing |
+
+**When It Makes Sense:**
+- Your entire stack already runs on Kubernetes
+- You need multi-cloud or hybrid portability
+- Your team has strong Kubernetes operational expertise
+- You want unified GitOps deployments for app + database
+- Cost optimization via spot nodes and bin-packing
+
+**When It's an Anti-Pattern:**
+- You're adopting Kubernetes *just* for the database
+- Your team lacks Kubernetes operational experience
+- You need a guaranteed SLA without managing HA yourself
+- "Just need a database" without the K8s ecosystem benefits
+
+**Best For:**
+- Kubernetes-native organizations
+- Multi-cloud or hybrid-cloud strategies
+- Teams with platform engineering capabilities
+- Startups wanting cost-efficient, portable infrastructure
+
+---
+
+### 5. Azure Cosmos DB for PostgreSQL ❌ (Deprecated for New Projects)
 
 **⚠️ Important: This service is no longer supported for new projects.**
 
@@ -142,7 +195,7 @@ If you have existing Cosmos DB for PostgreSQL clusters, they continue to work, b
 
 ---
 
-### 5. Azure Database for PostgreSQL - Single Server ❌ (Retired)
+### 6. Azure Database for PostgreSQL - Single Server ❌ (Retired)
 
 **⚠️ This deployment option has been retired.**
 
@@ -154,18 +207,19 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
 
 ## Feature Comparison Matrix
 
-| Feature | Flexible Server | Elastic Clusters | VMs (IaaS) |
-|---------|-----------------|------------------|------------|
-| **Fully Managed** | ✅ | ✅ | ❌ |
-| **Auto Patching** | ✅ | ✅ | ❌ |
-| **Zone-Redundant HA** | ✅ | ✅ | Manual |
-| **Horizontal Sharding** | ❌ | ✅ (Citus) | Manual |
-| **Stop/Start (Cost Savings)** | ✅ | ❌ | ✅ (Deallocate) |
-| **Built-in PgBouncer** | ✅ | ✅ | Manual |
-| **Custom Extensions** | Limited | Limited | ✅ Any |
-| **OS Access** | ❌ | ❌ | ✅ Full |
-| **Geo-Redundant Backup** | ✅ | ✅ | Manual |
-| **SLA** | Up to 99.99% | Up to 99.99% | VM SLA |
+| Feature | Flexible Server | Elastic Clusters | VMs (IaaS) | AKS (Operators) |
+|---------|-----------------|------------------|------------|-----------------|
+| **Fully Managed** | ✅ | ✅ | ❌ | ❌ (Operator-assisted) |
+| **Auto Patching** | ✅ | ✅ | ❌ | ❌ (You manage) |
+| **Zone-Redundant HA** | ✅ | ✅ | Manual | Operator-managed |
+| **Horizontal Sharding** | ❌ | ✅ (Citus) | Manual | Operator-dependent |
+| **Stop/Start (Cost Savings)** | ✅ | ❌ | ✅ (Deallocate) | ✅ (Scale to 0) |
+| **Built-in PgBouncer** | ✅ | ✅ | Manual | Sidecar/Operator |
+| **Custom Extensions** | Limited | Limited | ✅ Any | ✅ Any |
+| **OS Access** | ❌ | ❌ | ✅ Full | Container-level |
+| **Geo-Redundant Backup** | ✅ | ✅ | Manual | Manual (pgBackRest) |
+| **Multi-Cloud Portable** | ❌ | ❌ | ❌ | ✅ |
+| **SLA** | Up to 99.99% | Up to 99.99% | VM SLA | Your design |
 
 ---
 
@@ -178,25 +232,33 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
                     └───────────┬─────────────┘
                                 │
                     ┌───────────▼─────────────┐
-                    │  Need full OS/engine    │
-                    │       control?          │
+                    │  Already running on     │
+                    │  Kubernetes / AKS?      │
                     └───────────┬─────────────┘
                                 │
-                   ┌────────────┴────────────┐
-                   │ YES                 NO  │
-                   ▼                         ▼
-          ┌────────────────┐     ┌───────────────────────┐
-          │ PostgreSQL on  │     │ Will data exceed      │
-          │   Azure VMs    │     │ single-node capacity? │
-          └────────────────┘     └───────────┬───────────┘
-                                             │
-                                ┌────────────┴────────────┐
-                                │ YES                 NO  │
-                                ▼                         ▼
-                    ┌────────────────────┐    ┌────────────────────┐
-                    │  Elastic Clusters  │    │  Flexible Server   │
-                    │     (Citus)        │    │    (Standard)      │
-                    └────────────────────┘    └────────────────────┘
+               ┌────────────────┴────────────────┐
+               │ YES                          NO │
+               ▼                                 ▼
+    ┌──────────────────────┐      ┌──────────────────────────┐
+    │  Need multi-cloud    │      │  Need full OS/engine     │
+    │  portability?        │      │       control?           │
+    └──────────┬───────────┘      └───────────┬──────────────┘
+               │                              │
+      ┌────────┴────────┐          ┌──────────┴──────────┐
+      │ YES         NO  │          │ YES             NO  │
+      ▼                 ▼          ▼                     ▼
+┌───────────┐   ┌────────────┐  ┌────────────┐  ┌─────────────────┐
+│PostgreSQL │   │ Flexible   │  │PostgreSQL  │  │ Will data exceed│
+│  on AKS   │   │  Server    │  │  on VMs    │  │ single-node?    │
+│(Operators)│   │            │  │            │  └────────┬────────┘
+└───────────┘   └────────────┘  └────────────┘           │
+                                              ┌──────────┴──────────┐
+                                              │ YES             NO  │
+                                              ▼                     ▼
+                                     ┌────────────────┐  ┌────────────────┐
+                                     │Elastic Clusters│  │Flexible Server │
+                                     │    (Citus)     │  │   (Standard)   │
+                                     └────────────────┘  └────────────────┘
 ```
 
 ---
@@ -224,6 +286,7 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
 | **Flexible Server** | vCores + Storage + Backup | Use Burstable tier for dev/test; Stop when not in use |
 | **Elastic Clusters** | Per-node (vCores + Storage) | Start small, add nodes as needed; Rebalance online |
 | **VMs** | VM SKU + Disks + Backup | Reserved instances for production; B-series for dev |
+| **AKS** | Node pool VMs + Disks | Spot nodes for non-prod; bin-packing; scale to zero |
 
 Use the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/) for detailed estimates.
 
@@ -234,6 +297,8 @@ Use the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculato
 For most PostgreSQL workloads on Azure, **Azure Database for PostgreSQL - Flexible Server** is the recommended choice. It balances managed convenience with configuration flexibility.
 
 If you're building a multi-tenant SaaS app or need to scale beyond a single node, enable **Elastic Clusters** to get the power of Citus.
+
+For **Kubernetes-native organizations** already running on AKS with strong platform engineering capabilities, **PostgreSQL on AKS with operators** (CloudNativePG, Zalando, Crunchy PGO) is a solid choice—especially if you need multi-cloud portability.
 
 Only go the **IaaS route (VMs)** if you have specific requirements that PaaS can't meet—and be prepared to handle the operational overhead.
 
@@ -248,6 +313,9 @@ Avoid deprecated options (Cosmos DB for PostgreSQL, Single Server) for new proje
 - [Elastic clusters in Azure Database for PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-elastic-clusters)
 - [Azure Database for PostgreSQL Pricing](https://azure.microsoft.com/pricing/details/postgresql/server/)
 - [Migration Service Overview](https://learn.microsoft.com/en-us/azure/postgresql/migrate/migration-service/overview-migration-service-postgresql)
+- [CloudNativePG](https://cloudnative-pg.io/) — CNCF PostgreSQL Operator
+- [Zalando Postgres Operator](https://github.com/zalando/postgres-operator)
+- [Crunchy PGO](https://github.com/CrunchyData/postgres-operator)
 
 ---
 
