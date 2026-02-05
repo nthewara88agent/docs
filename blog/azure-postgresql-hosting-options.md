@@ -1,3 +1,154 @@
+# Running PostgreSQL as a Stateful Pod on Azure Kubernetes Service (AKS)
+
+What is AKS Kubernetes StatefulSet and Why stateful workloads (like Postgres) require special handling
+
+**Deployment Options for Postgres on AKS**
+
+Option A: Plain StatefulSet
+
+Architecture overview
+Pros / Cons
+Suitable scenarios
+
+Option B: Postgres Operator
+
+Examples: CloudNativePG, Zalando, CrunchyData
+Why operators are recommended for production
+
+Pros / Cons
+
+Option C: Managed Database (Azure Database for PostgreSQL)
+
+When managed service is preferred
+Comparison table vs AKS-based deployment
+
+**Architecture Overview**
+
+4.1 Single Instance Architecture
+
+Pod, PVC, PV
+Headless service
+Persistent disk on Azure Managed Disk
+
+4.2 High Availability Architecture
+
+Primary + read replicas
+Replication (synchronous / asynchronous)
+Failover and leader election
+
+4.3 Storage Architecture
+
+Managed Disk
+Disk types (Premium SSD, Premium SSD v2, Ultra)
+CSI drivers
+IOPS/throughput considerations
+
+4.4 Networking Architecture
+
+Kubernetes service
+NetworkPolicy
+Private cluster / Private Link
+Firewalling considerations
+
+5. Kubernetes Components for a Stateful Postgres
+5.1 StatefulSet Design
+
+Identity and stable network names
+Pod management policy
+Update strategy (rolling / on-delete)
+
+5.2 Storage
+
+PersistentVolumeClaim
+Data directory mapping
+WAL behavior and fsync considerations
+
+5.3 Configuration & Secrets
+
+ConfigMap for Postgres configs
+Secrets for credentials
+Environment variables and initdb args
+
+5.4 Health Probes
+
+Liveness probe
+Readiness probe
+Startup probe (optional)
+
+5.5 PodDisruptionBudget
+
+Ensuring resilience during maintenance
+
+5.6 Resource Requests and Limits
+
+CPU
+Memory
+How it impacts Postgres internals
+
+6. Backup and Restore Strategy
+6.1 Backup Approaches
+
+Logical backups (pg_dump)
+Physical backups (pgBackRest / wal-g)
+Operator-enabled backups
+
+6.2 Backup Storage
+
+Azure Blob Storage
+Retention policies
+PITR (Point‑in‑Time Recovery)
+
+6.3 Restore Procedures
+
+Restoring into a new Pod
+Restoring into a new cluster
+Common issues and mitigations
+
+7. Security & Compliance
+7.1 Authentication & Secrets Management
+
+Kubernetes Secrets
+Azure Key Vault + CSI driver
+
+7.2 Data Encryption
+
+Encryption at rest
+TLS in-transit
+Disk encryption options
+
+7.3 Network Security
+
+NetworkPolicies
+Private ingress patterns
+Restricting administrative access
+
+
+8. Operational Considerations
+8.1 Scaling
+
+Vertical scaling (memory/CPU)
+Storage resizing
+Read replicas for scaling reads
+
+8.2 High Availability & Failover
+
+Manual failover (non-operator)
+Automatic failover (operator)
+Anti-affinity rules
+
+8.3 Monitoring
+
+Postgres metrics
+Azure Monitor
+Prometheus & Grafana
+
+8.4 Upgrades
+
+Minor version upgrades
+Major version upgrades
+Blue/green vs in-place
+
+
 # Azure PostgreSQL Hosting Options: A Complete Comparison Guide
 
 *Published: 4 February 2026 | Updated: 5 February 2026*
