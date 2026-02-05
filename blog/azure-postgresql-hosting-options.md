@@ -1,6 +1,6 @@
 # Azure PostgreSQL Hosting Options: A Complete Comparison Guide
 
-*Published: 4 February 2026*
+*Published: 4 February 2026 | Updated: 5 February 2026*
 
 Choosing the right PostgreSQL hosting option on Azure can be confusing. With multiple services available—some deprecated, some evolving—it's essential to understand what's current and what fits your workload. This guide breaks down all your options based on official Microsoft documentation.
 
@@ -10,6 +10,7 @@ Choosing the right PostgreSQL hosting option on Azure can be confusing. With mul
 |------|-------------------|
 | **Standard workloads** (web apps, APIs) | Azure Database for PostgreSQL - Flexible Server |
 | **Horizontal scale** (SaaS, multi-tenant) | Flexible Server with Elastic Clusters (Citus) |
+| **Ultra-scale, cloud-native** (up to 128TB, 3072 vCores) | Azure HorizonDB (Preview) |
 | **Full control** (custom extensions, OS access) | PostgreSQL on Azure VMs |
 | **Kubernetes-native, multi-cloud** | PostgreSQL on AKS (with operators) |
 | **Massive distributed scale** | Azure Cosmos DB for NoSQL (not PostgreSQL) |
@@ -92,7 +93,61 @@ Elastic Clusters is a feature of Azure Database for PostgreSQL that enables the 
 
 ---
 
-### 3. PostgreSQL on Azure VMs (IaaS) ⚠️ (Full Control)
+### 3. Azure HorizonDB 🆕 (Preview - Ultra-Scale Cloud-Native)
+
+**Next-generation fully managed Postgres-compatible database for demanding workloads.**
+
+Announced at Microsoft Ignite 2025, Azure HorizonDB is a cloud-native PostgreSQL-compatible database service designed for modern enterprise workloads requiring extreme scale. It features a new architecture with shared storage, scale-out compute, and tiered caching optimized for cloud applications.
+
+> ⚠️ **Preview Status:** Azure HorizonDB is currently in limited preview. Apply for early access at [aka.ms/PreviewHorizonDB](https://aka.ms/PreviewHorizonDB).
+
+**Key Features:**
+- **Scale-Out Compute:** Up to 3,072 vCores across primary and replica nodes
+- **Shared Storage:** Auto-scaling up to 128 TB with sub-millisecond multi-zone commit latencies
+- **Performance:** Up to 3x more throughput than open-source Postgres for transactional workloads (per Microsoft's announcement)
+- **Zone Redundancy:** Data replicated across availability zones by default
+- **Near-Zero Downtime Maintenance:** Transparent maintenance operations
+- **Enterprise Security:** Native Entra ID support, Private Endpoints, data encryption
+- **Azure Defender Integration:** Additional protection for sensitive data
+
+**AI Capabilities:**
+- **DiskANN Vector Index with Filtering:** Advanced query predicate pushdowns directly into vector similarity search, providing performance improvements over pgvector HNSW while maintaining accuracy
+- **Built-in AI Model Management:** Seamless integration with generative, embedding, and reranking models from Microsoft Foundry—zero configuration required
+
+**Developer Tooling:**
+- **PostgreSQL Extension for VS Code (GA):** GitHub Copilot context-aware of Postgres databases
+- **Live Performance Monitoring:** One-click GitHub Copilot debugging from performance dashboard
+- **Oracle Migration Tooling (Preview):** GitHub Copilot-powered Oracle-to-PostgreSQL code conversion in VS Code
+
+**Available Regions (Preview):**
+- Central US
+- West US3
+- UK South
+- Australia East
+
+**Best For:**
+- Mission-critical enterprise applications requiring extreme scale
+- AI applications with vector similarity search at scale
+- Large-scale migrations from legacy databases (Oracle, etc.)
+- Workloads requiring 128TB+ storage or thousands of vCores
+- Applications needing sub-millisecond commit latencies across zones
+
+**When to Choose Over Flexible Server:**
+- Your workload exceeds Flexible Server's 64 TB storage limit
+- You need more than Flexible Server's maximum vCores
+- You require the advanced DiskANN vector indexing with predicate pushdown
+- You're building AI applications that benefit from built-in model integration
+
+**Considerations:**
+- Currently in preview—not recommended for production without engaging Microsoft
+- Limited region availability during preview
+- Pricing not yet publicly documented
+
+**Reference:** [Announcing Azure HorizonDB](https://techcommunity.microsoft.com/blog/adforpostgresql/announcing-azure-horizondb/4469710)
+
+---
+
+### 4. PostgreSQL on Azure VMs (IaaS) ⚠️ (Full Control)
 
 **Self-managed PostgreSQL on Azure Virtual Machines.**
 
@@ -130,7 +185,7 @@ For scenarios where you need complete control over the PostgreSQL engine, operat
 
 ---
 
-### 4. PostgreSQL on Azure Kubernetes Service (AKS) ⚠️ (Kubernetes-Native)
+### 5. PostgreSQL on Azure Kubernetes Service (AKS) ⚠️ (Kubernetes-Native)
 
 **Self-managed PostgreSQL on Kubernetes using operators.**
 
@@ -182,7 +237,7 @@ For teams already running workloads on AKS and wanting a unified Kubernetes-nati
 
 ---
 
-### 5. Azure Cosmos DB for PostgreSQL ❌ (Deprecated for New Projects)
+### 6. Azure Cosmos DB for PostgreSQL ❌ (Deprecated for New Projects)
 
 **⚠️ Important: This service is no longer supported for new projects.**
 
@@ -195,7 +250,7 @@ If you have existing Cosmos DB for PostgreSQL clusters, they continue to work, b
 
 ---
 
-### 6. Azure Database for PostgreSQL - Single Server ❌ (Retired)
+### 7. Azure Database for PostgreSQL - Single Server ❌ (Retired)
 
 **⚠️ This deployment option has been retired.**
 
@@ -207,19 +262,24 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
 
 ## Feature Comparison Matrix
 
-| Feature | Flexible Server | Elastic Clusters | VMs (IaaS) | AKS (Operators) |
-|---------|-----------------|------------------|------------|-----------------|
-| **Fully Managed** | ✅ | ✅ | ❌ | ❌ (Operator-assisted) |
-| **Auto Patching** | ✅ | ✅ | ❌ | ❌ (You manage) |
-| **Zone-Redundant HA** | ✅ | ✅ | Manual | Operator-managed |
-| **Horizontal Sharding** | ❌ | ✅ (Citus) | Manual | Operator-dependent |
-| **Stop/Start (Cost Savings)** | ✅ | ❌ | ✅ (Deallocate) | ✅ (Scale to 0) |
-| **Built-in PgBouncer** | ✅ | ✅ | Manual | Sidecar/Operator |
-| **Custom Extensions** | Limited | Limited | ✅ Any | ✅ Any |
-| **OS Access** | ❌ | ❌ | ✅ Full | Container-level |
-| **Geo-Redundant Backup** | ✅ | ✅ | Manual | Manual (pgBackRest) |
-| **Multi-Cloud Portable** | ❌ | ❌ | ❌ | ✅ |
-| **SLA** | Up to 99.99% | Up to 99.99% | VM SLA | Your design |
+| Feature | Flexible Server | Elastic Clusters | HorizonDB (Preview) | VMs (IaaS) | AKS (Operators) |
+|---------|-----------------|------------------|---------------------|------------|-----------------| 
+| **Fully Managed** | ✅ | ✅ | ✅ | ❌ | ❌ (Operator-assisted) |
+| **Auto Patching** | ✅ | ✅ | ✅ | ❌ | ❌ (You manage) |
+| **Zone-Redundant HA** | ✅ | ✅ | ✅ (default) | Manual | Operator-managed |
+| **Horizontal Sharding** | ❌ | ✅ (Citus) | ✅ (scale-out) | Manual | Operator-dependent |
+| **Max Storage** | 64 TB | Per-node | 128 TB | Disk limits | Disk limits |
+| **Max Compute** | Per-tier | Per-node × nodes | 3,072 vCores | VM SKU | Node pool |
+| **Stop/Start (Cost Savings)** | ✅ | ❌ | TBD | ✅ (Deallocate) | ✅ (Scale to 0) |
+| **Built-in PgBouncer** | ✅ | ✅ | TBD | Manual | Sidecar/Operator |
+| **Custom Extensions** | Limited | Limited | TBD | ✅ Any | ✅ Any |
+| **OS Access** | ❌ | ❌ | ❌ | ✅ Full | Container-level |
+| **Geo-Redundant Backup** | ✅ | ✅ | ✅ | Manual | Manual (pgBackRest) |
+| **Vector Index (AI)** | pgvector | pgvector | DiskANN + filtering | Any | Any |
+| **Built-in AI Models** | ❌ | ❌ | ✅ (Foundry) | Manual | Manual |
+| **Multi-Cloud Portable** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **SLA** | Up to 99.99% | Up to 99.99% | TBD (Preview) | VM SLA | Your design |
+| **Production Ready** | ✅ | ✅ | ⚠️ Preview | ✅ | ✅ |
 
 ---
 
@@ -248,17 +308,25 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
       │ YES         NO  │          │ YES             NO  │
       ▼                 ▼          ▼                     ▼
 ┌───────────┐   ┌────────────┐  ┌────────────┐  ┌─────────────────┐
-│PostgreSQL │   │ Flexible   │  │PostgreSQL  │  │ Will data exceed│
-│  on AKS   │   │  Server    │  │  on VMs    │  │ single-node?    │
+│PostgreSQL │   │ Flexible   │  │PostgreSQL  │  │ Need ultra-scale│
+│  on AKS   │   │  Server    │  │  on VMs    │  │ (>64TB, 3K+ vC)?│
 │(Operators)│   │            │  │            │  └────────┬────────┘
 └───────────┘   └────────────┘  └────────────┘           │
                                               ┌──────────┴──────────┐
                                               │ YES             NO  │
                                               ▼                     ▼
-                                     ┌────────────────┐  ┌────────────────┐
-                                     │Elastic Clusters│  │Flexible Server │
-                                     │    (Citus)     │  │   (Standard)   │
-                                     └────────────────┘  └────────────────┘
+                                    ┌─────────────────┐  ┌─────────────────┐
+                                    │  HorizonDB      │  │ Will data exceed│
+                                    │  (Preview)      │  │ single-node?    │
+                                    └─────────────────┘  └────────┬────────┘
+                                                                  │
+                                                       ┌──────────┴──────────┐
+                                                       │ YES             NO  │
+                                                       ▼                     ▼
+                                              ┌────────────────┐  ┌────────────────┐
+                                              │Elastic Clusters│  │Flexible Server │
+                                              │    (Citus)     │  │   (Standard)   │
+                                              └────────────────┘  └────────────────┘
 ```
 
 ---
@@ -277,6 +345,10 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
 - Migrate to Flexible Server with Elastic Clusters enabled
 - Citus extension provides the same sharding capabilities
 
+### From Oracle (New)
+- Azure HorizonDB offers GitHub Copilot-powered Oracle migration tooling (preview)
+- Available in PostgreSQL Extension for VS Code
+
 ---
 
 ## Pricing Overview
@@ -285,6 +357,7 @@ If you have Single Server instances, Microsoft recommends migrating to Flexible 
 |--------|---------------|------------------------|
 | **Flexible Server** | vCores + Storage + Backup | Use Burstable tier for dev/test; Stop when not in use |
 | **Elastic Clusters** | Per-node (vCores + Storage) | Start small, add nodes as needed; Rebalance online |
+| **HorizonDB** | TBD (Preview) | Apply for preview access; pricing not yet public |
 | **VMs** | VM SKU + Disks + Backup | Reserved instances for production; B-series for dev |
 | **AKS** | Node pool VMs + Disks | Spot nodes for non-prod; bin-packing; scale to zero |
 
@@ -297,6 +370,8 @@ Use the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculato
 For most PostgreSQL workloads on Azure, **Azure Database for PostgreSQL - Flexible Server** is the recommended choice. It balances managed convenience with configuration flexibility.
 
 If you're building a multi-tenant SaaS app or need to scale beyond a single node, enable **Elastic Clusters** to get the power of Citus.
+
+For **ultra-scale enterprise workloads** requiring 128TB storage, thousands of vCores, or advanced AI capabilities with DiskANN vector indexing, **Azure HorizonDB** (currently in preview) represents Microsoft's next-generation offering—though you should engage with Microsoft for preview access before committing.
 
 For **Kubernetes-native organizations** already running on AKS with strong platform engineering capabilities, **PostgreSQL on AKS with operators** (CloudNativePG, Zalando, Crunchy PGO) is a solid choice—especially if you need multi-cloud portability.
 
@@ -311,6 +386,8 @@ Avoid deprecated options (Cosmos DB for PostgreSQL, Single Server) for new proje
 - [Choose the right Azure Database for PostgreSQL hosting option](https://learn.microsoft.com/en-us/azure/postgresql/configure-maintain/overview-postgres-choose-server-options)
 - [What is Azure Database for PostgreSQL?](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview)
 - [Elastic clusters in Azure Database for PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-elastic-clusters)
+- [Announcing Azure HorizonDB](https://techcommunity.microsoft.com/blog/adforpostgresql/announcing-azure-horizondb/4469710) — Microsoft Tech Community
+- [Azure HorizonDB Preview Signup](https://aka.ms/PreviewHorizonDB)
 - [Azure Database for PostgreSQL Pricing](https://azure.microsoft.com/pricing/details/postgresql/server/)
 - [Migration Service Overview](https://learn.microsoft.com/en-us/azure/postgresql/migrate/migration-service/overview-migration-service-postgresql)
 - [CloudNativePG](https://cloudnative-pg.io/) — CNCF PostgreSQL Operator
@@ -319,4 +396,5 @@ Avoid deprecated options (Cosmos DB for PostgreSQL, Single Server) for new proje
 
 ---
 
-*This blog post was researched using Microsoft Learn documentation and published to help clarify Azure PostgreSQL hosting options.*
+*This blog post was researched using Microsoft Learn documentation and official Microsoft announcements. Last updated to include Azure HorizonDB preview announced at Microsoft Ignite 2025.*
+
