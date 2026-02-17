@@ -1,0 +1,68 @@
+[
+  {"type":"cameraUpdate","width":1200,"height":900,"x":-50,"y":-20},
+  
+  {"type":"text","id":"title","x":350,"y":10,"text":"Azure Dual Hub-Spoke IPsec Architecture","fontSize":28,"strokeColor":"#1e1e1e"},
+  {"type":"text","id":"subtitle","x":420,"y":50,"text":"fwpcap - Firewall Policy Cross-Region VPN","fontSize":16,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"hub1zone","x":20,"y":100,"width":400,"height":420,"backgroundColor":"#dbe4ff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#4a9eed","strokeWidth":1,"opacity":35},
+  {"type":"text","id":"hub1zonelbl","x":35,"y":110,"text":"Region 1 (Hub-Spoke)","fontSize":16,"strokeColor":"#2563eb"},
+  
+  {"type":"rectangle","id":"hub1","x":50,"y":150,"width":340,"height":200,"backgroundColor":"#a5d8ff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#1971c2","strokeWidth":2},
+  {"type":"text","id":"hub1lbl","x":130,"y":165,"text":"Hub 1 VNet","fontSize":20,"strokeColor":"#1e1e1e"},
+  {"type":"text","id":"hub1cidr","x":140,"y":195,"text":"10.0.0.0/16","fontSize":16,"strokeColor":"#495057"},
+  
+  {"type":"rectangle","id":"azfw","x":80,"y":230,"width":130,"height":60,"backgroundColor":"#ffc9c9","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#e03131","strokeWidth":2,"label":{"text":"Azure Firewall","fontSize":16}},
+  {"type":"text","id":"azfwip","x":105,"y":295,"text":"10.0.1.4","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"vpngw1","x":230,"y":230,"width":130,"height":60,"backgroundColor":"#d0bfff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#8b5cf6","strokeWidth":2,"label":{"text":"VPN Gateway","fontSize":16}},
+  {"type":"text","id":"vpngw1ip","x":245,"y":295,"text":"20.28.233.61","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"spoke1","x":80,"y":390,"width":280,"height":110,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#2f9e44","strokeWidth":2},
+  {"type":"text","id":"spoke1lbl","x":160,"y":405,"text":"Spoke 1 VNet","fontSize":18,"strokeColor":"#1e1e1e"},
+  {"type":"text","id":"spoke1cidr","x":170,"y":430,"text":"10.1.0.0/24","fontSize":14,"strokeColor":"#495057"},
+  
+  {"type":"rectangle","id":"vm1","x":140,"y":455,"width":160,"height":40,"backgroundColor":"#c3fae8","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","strokeWidth":2,"label":{"text":"Linux VM","fontSize":16}},
+  {"type":"text","id":"vm1ip","x":185,"y":497,"text":"10.1.0.4","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"arrow","id":"peering1","x":220,"y":350,"width":0,"height":40,"points":[[0,0],[0,40]],"strokeColor":"#495057","strokeWidth":2,"strokeStyle":"dashed","endArrowhead":"arrow","startArrowhead":"arrow"},
+  {"type":"text","id":"peering1lbl","x":230,"y":360,"text":"Peering","fontSize":12,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"hub2zone","x":680,"y":100,"width":400,"height":420,"backgroundColor":"#e5dbff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#8b5cf6","strokeWidth":1,"opacity":35},
+  {"type":"text","id":"hub2zonelbl","x":695,"y":110,"text":"Region 2 (Hub-Spoke)","fontSize":16,"strokeColor":"#7c3aed"},
+  
+  {"type":"rectangle","id":"hub2","x":710,"y":150,"width":340,"height":200,"backgroundColor":"#d0bfff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#8b5cf6","strokeWidth":2},
+  {"type":"text","id":"hub2lbl","x":795,"y":165,"text":"Hub 2 VNet","fontSize":20,"strokeColor":"#1e1e1e"},
+  {"type":"text","id":"hub2cidr","x":800,"y":195,"text":"10.10.0.0/16","fontSize":16,"strokeColor":"#495057"},
+  
+  {"type":"rectangle","id":"vpngw2","x":765,"y":230,"width":130,"height":60,"backgroundColor":"#d0bfff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#8b5cf6","strokeWidth":2,"label":{"text":"VPN Gateway","fontSize":16}},
+  {"type":"text","id":"vpngw2ip","x":780,"y":295,"text":"20.28.213.47","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"spoke2","x":740,"y":390,"width":280,"height":110,"backgroundColor":"#ffd8a8","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#f08c00","strokeWidth":2},
+  {"type":"text","id":"spoke2lbl","x":820,"y":405,"text":"Spoke 2 VNet","fontSize":18,"strokeColor":"#1e1e1e"},
+  {"type":"text","id":"spoke2cidr","x":825,"y":430,"text":"10.11.0.0/24","fontSize":14,"strokeColor":"#495057"},
+  
+  {"type":"rectangle","id":"vm2","x":800,"y":455,"width":160,"height":40,"backgroundColor":"#c3fae8","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","strokeWidth":2,"label":{"text":"Linux VM","fontSize":16}},
+  {"type":"text","id":"vm2ip","x":845,"y":497,"text":"10.11.0.4","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"arrow","id":"peering2","x":880,"y":350,"width":0,"height":40,"points":[[0,0],[0,40]],"strokeColor":"#495057","strokeWidth":2,"strokeStyle":"dashed","endArrowhead":"arrow","startArrowhead":"arrow"},
+  {"type":"text","id":"peering2lbl","x":890,"y":360,"text":"Peering","fontSize":12,"strokeColor":"#757575"},
+  
+  {"type":"rectangle","id":"ipsecbox","x":420,"y":220,"width":260,"height":80,"backgroundColor":"#fff3bf","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#f59e0b","strokeWidth":3},
+  {"type":"text","id":"ipseclbl","x":465,"y":235,"text":"IPsec VPN Tunnel","fontSize":18,"strokeColor":"#b45309"},
+  {"type":"text","id":"ipsecdetail","x":440,"y":262,"text":"IKEv2 | AES256-GCM | PFS","fontSize":14,"strokeColor":"#757575"},
+  
+  {"type":"arrow","id":"vpnconn1","x":360,"y":260,"width":60,"height":0,"points":[[0,0],[60,0]],"strokeColor":"#f59e0b","strokeWidth":3,"endArrowhead":"arrow"},
+  {"type":"arrow","id":"vpnconn2","x":680,"y":260,"width":-55,"height":0,"points":[[0,0],[-55,0]],"strokeColor":"#f59e0b","strokeWidth":3,"endArrowhead":"arrow"},
+  
+  {"type":"text","id":"trafficlbl","x":400,"y":560,"text":"Network Tester Traffic Flow","fontSize":18,"strokeColor":"#1e1e1e"},
+  {"type":"arrow","id":"traffic1","x":300,"y":610,"width":500,"height":0,"points":[[0,0],[500,0]],"strokeColor":"#22c55e","strokeWidth":3,"endArrowhead":"arrow","label":{"text":"Spoke1 VM → IPsec Tunnel → Spoke2 VM","fontSize":16}},
+  
+  {"type":"rectangle","id":"legend","x":420,"y":700,"width":260,"height":140,"backgroundColor":"#e9ecef","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#495057","strokeWidth":1},
+  {"type":"text","id":"legendtitle","x":510,"y":710,"text":"Legend","fontSize":16,"strokeColor":"#1e1e1e"},
+  {"type":"arrow","id":"leg1","x":440,"y":745,"width":40,"height":0,"points":[[0,0],[40,0]],"strokeColor":"#495057","strokeWidth":2,"strokeStyle":"dashed","endArrowhead":"arrow","startArrowhead":"arrow"},
+  {"type":"text","id":"leg1txt","x":495,"y":738,"text":"VNet Peering","fontSize":14,"strokeColor":"#495057"},
+  {"type":"arrow","id":"leg2","x":440,"y":775,"width":40,"height":0,"points":[[0,0],[40,0]],"strokeColor":"#f59e0b","strokeWidth":3,"endArrowhead":"arrow"},
+  {"type":"text","id":"leg2txt","x":495,"y":768,"text":"IPsec Tunnel","fontSize":14,"strokeColor":"#495057"},
+  {"type":"arrow","id":"leg3","x":440,"y":805,"width":40,"height":0,"points":[[0,0],[40,0]],"strokeColor":"#22c55e","strokeWidth":3,"endArrowhead":"arrow"},
+  {"type":"text","id":"leg3txt","x":495,"y":798,"text":"Traffic Flow","fontSize":14,"strokeColor":"#495057"}
+]
